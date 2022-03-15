@@ -1,0 +1,11 @@
+---
+version: "3.7"
+
+services:
+  onlyoffice:
+    image: onlyoffice/documentserver:6.4.0
+    environment:
+      USE_UNAUTHORIZED_STORAGE: "true" # self signed certificates
+
+    ports:
+      - 8080:80
