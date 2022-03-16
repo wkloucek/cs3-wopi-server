@@ -12,28 +12,29 @@ import (
 	rpcv1beta1 "github.com/cs3org/go-cs3apis/cs3/rpc/v1beta1"
 	"github.com/cs3org/reva/v2/pkg/mime"
 	"github.com/cs3org/reva/v2/pkg/rgrpc/todo/pool"
+	"github.com/owncloud/ocis/ocis-pkg/config/envdecode"
 	"google.golang.org/grpc"
 )
 
 type GRPC struct {
-	Addr     string
-	BindAddr string
+	Addr     string `env:"WOPI_GRPC_ADDR"`
+	BindAddr string `env:"WOPI_GRPC_BIND_ADDR"`
 }
 
 type HTTP struct {
-	Addr     string
-	BindAddr string
-	Scheme   string
+	Addr     string `env:"WOPI_HTTP_ADDR"`
+	BindAddr string `env:"WOPI_HTTP_BIND_ADDR"`
+	Scheme   string `env:"WOPI_HTTP_SCHEME"`
 }
 
 type WopiApp struct {
-	Addr     string
-	Insecure bool
+	Addr     string `env:"WOPI_APP_ADDR"`
+	Insecure bool   `env:"WOPI_APP_INSECURE"`
 }
 
 type CS3api struct {
-	Addr                   string
-	CS3DataGatewayInsecure bool
+	Addr                   string `env:"WOPI_CS3API_ADDR"`
+	CS3DataGatewayInsecure bool   `env:"WOPI_CS3API_DATA_GATEWAY_INSECURE"`
 }
 
 type Config struct {
@@ -42,10 +43,10 @@ type Config struct {
 	WopiApp
 	CS3api
 
-	JWTSecret      string
-	AppName        string
-	AppDescription string
-	AppIcon        string
+	JWTSecret      string `env:"WOPI_JWT_SECRET"`
+	AppName        string `env:"WOPI_APP_NAME"`
+	AppDescription string `env:"WOPI_APP_DESCRIPTION"`
+	AppIcon        string `env:"WOPI_APP_ICON"`
 }
 
 type demoApp struct {
@@ -59,7 +60,7 @@ type demoApp struct {
 	Logger log.Logger
 }
 
-func New() *demoApp {
+func New() (*demoApp, error) {
 	app := &demoApp{
 		Config: Config{
 			AppName:        "WOPI app",
@@ -86,9 +87,16 @@ func New() *demoApp {
 		},
 	}
 
+	err := envdecode.Decode(app)
+	if err != nil {
+		if !errors.Is(err, envdecode.ErrNoTargetFieldsAreSet) {
+			return nil, err
+		}
+	}
+
 	app.Logger = logging.Configure("wopiserver")
 
-	return app
+	return app, nil
 }
 
 func (app *demoApp) GetCS3apiClient() error {

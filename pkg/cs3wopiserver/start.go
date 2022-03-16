@@ -10,7 +10,10 @@ import (
 func Start() error {
 	ctx := context.Background()
 
-	app := app.New()
+	app, err := app.New()
+	if err != nil {
+		return err
+	}
 
 	if err := app.WopiDiscovery(ctx); err != nil {
 		return err
