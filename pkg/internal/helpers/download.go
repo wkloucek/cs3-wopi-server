@@ -41,6 +41,8 @@ func DownloadFile(
 		logger.Error().Str(
 			"status code", resp.Status.Code.String(),
 		).Str(
+			"status msg", resp.Status.Message,
+		).Str(
 			"FileReference", ref.String(),
 		).Msg("DownloadHelper: InitiateFileDownload failed")
 		return http.Response{}, errors.New("status code != CODE_OK")

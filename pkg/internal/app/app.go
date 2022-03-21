@@ -47,6 +47,7 @@ type Config struct {
 	AppName        string `env:"WOPI_APP_NAME"`
 	AppDescription string `env:"WOPI_APP_DESCRIPTION"`
 	AppIcon        string `env:"WOPI_APP_ICON"`
+	AppLockName    string `env:"WOPI_APP_LOCK_NAME"`
 }
 
 type demoApp struct {
@@ -66,6 +67,7 @@ func New() (*demoApp, error) {
 			AppName:        "WOPI app",
 			AppDescription: "Open office documents with a WOPI app",
 			AppIcon:        "image-edit",
+			AppLockName:    "com.owncloud.app.wopi-server",
 			JWTSecret:      "test",
 			CS3api: CS3api{
 				Addr:                   "127.0.0.1:9142",

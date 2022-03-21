@@ -42,6 +42,8 @@ func GetLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		app.Logger.Error().Str(
 			"status code", resp.Status.Code.String(),
 		).Str(
+			"status msg", resp.Status.Message,
+		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("GetLock failed")
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
@@ -75,9 +77,8 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		Ref: &wopiContext.FileReference,
 		Lock: &providerv1beta1.Lock{
 			LockId:  lockID,
-			Type:    providerv1beta1.LockType_LOCK_TYPE_EXCL,
-			AppName: "WOPI Server",
-			//User:    wopiContext.User.Id,
+			AppName: app.Config.AppLockName,
+			Type:    providerv1beta1.LockType_LOCK_TYPE_WRITE,
 			Expiration: &typesv1beta1.Timestamp{
 				Seconds: uint64(time.Now().Add(lockDuration).Unix()),
 			},
@@ -130,6 +131,8 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 			app.Logger.Error().Str(
 				"status code", resp.Status.Code.String(),
 			).Str(
+				"status msg", resp.Status.Message,
+			).Str(
 				"lock id", lockID,
 			).Str(
 				"FileReference", wopiContext.FileReference.String(),
@@ -149,6 +152,8 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	default:
 		app.Logger.Error().Str(
 			"status code", resp.Status.Code.String(),
+		).Str(
+			"status msg", resp.Status.Message,
 		).Str(
 			"lock id", lockID,
 		).Str(
@@ -182,8 +187,8 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	req := &providerv1beta1.UnlockRequest{
 		Ref: &wopiContext.FileReference,
 		Lock: &providerv1beta1.Lock{
-			LockId: lockID,
-			Type:   providerv1beta1.LockType_LOCK_TYPE_EXCL,
+			LockId:  lockID,
+			AppName: app.Config.AppLockName,
 		},
 	}
 
@@ -207,10 +212,12 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		app.Logger.Error().Str(
 			"status code", resp.Status.Code.String(),
 		).Str(
+			"status msg", resp.Status.Message,
+		).Str(
 			"lock id", lockID,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
-		).Msg("SetLock failed")
+		).Msg("UnLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
