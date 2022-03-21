@@ -40,5 +40,3 @@ require (
 	google.golang.org/genproto v0.0.0-20220307174427-659dce7fcb03 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
-
-replace github.com/cs3org/reva/v2 => /home/kloucek/Projects/github.com/cs3org/reva
