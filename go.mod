@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/beevik/etree v1.1.0
-	github.com/cs3org/go-cs3apis v0.0.0-20220225083901-a2f6792ed8b5
+	github.com/cs3org/go-cs3apis v0.0.0-20220328105952-297bef33e13f
 	github.com/cs3org/reva/v2 v2.0.0
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
