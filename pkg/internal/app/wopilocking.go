@@ -106,8 +106,8 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusOK), http.StatusOK)
 		return
 
-	case rpcv1beta1.Code_CODE_PERMISSION_DENIED:
-		// already locked #TODO: can we improve this?
+	case rpcv1beta1.Code_CODE_FAILED_PRECONDITION:
+		// already locked
 		req := &providerv1beta1.GetLockRequest{
 			Ref: &wopiContext.FileReference,
 		}
