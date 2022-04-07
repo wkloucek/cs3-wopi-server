@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	ctxpkg "github.com/cs3org/reva/v2/pkg/ctx"
 	"github.com/wkloucek/cs3-wopi-server/pkg/internal/helpers"
 )
 
@@ -67,11 +66,6 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	wopiContext, _ := WopiContextFromCtx(ctx)
 
-	lockID := r.Header.Get(HeaderWopiLock)
-	if lockID != "" {
-		ctx = ctxpkg.ContextSetLockID(ctx, lockID)
-	}
-
 	// read the file from the body
 	defer r.Body.Close()
 	file, err := ioutil.ReadAll(r.Body)
@@ -90,6 +84,7 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		&wopiContext.FileReference,
 		app.gwc,
 		wopiContext.AccessToken,
+		r.Header.Get(HeaderWopiLock),
 		app.Config.CS3DataGatewayInsecure,
 		app.Logger,
 	)
