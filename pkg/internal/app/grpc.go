@@ -2,7 +2,8 @@ package app
 
 import (
 	"context"
-	"encoding/base64"
+	"crypto/sha256"
+	"encoding/hex"
 	"net"
 	"net/url"
 	"path"
@@ -50,10 +51,12 @@ func (app *demoApp) OpenInApp(
 		}
 	}
 
-	// build a urlsafe and stable file id that can be used for proxy routing
-	// we don't use it as an actual reference, because we use the file reference from the token
-	fileID := req.ResourceInfo.Id.StorageId + "!" + req.ResourceInfo.Id.OpaqueId
-	fileID = base64.URLEncoding.EncodeToString([]byte(fileID))
+	// build a urlsafe and stable file reference that can be used for proxy routing,
+	// so that all sessions on one file end on the same office server
+
+	c := sha256.New()
+	c.Write([]byte(req.ResourceInfo.Id.StorageId + "$" + req.ResourceInfo.Id.SpaceId + "!" + req.ResourceInfo.Id.OpaqueId))
+	fileRef := hex.EncodeToString(c.Sum(nil))
 
 	// get the file extension to use the right wopi app url
 	fileExt := path.Ext(req.GetResourceInfo().Path)
@@ -82,7 +85,7 @@ func (app *demoApp) OpenInApp(
 	wopiSrcURL := url.URL{
 		Scheme: app.Config.HTTP.Scheme,
 		Host:   app.Config.HTTP.Addr,
-		Path:   path.Join("wopi", "files", fileID),
+		Path:   path.Join("wopi", "files", fileRef),
 	}
 
 	addWopiSrcQueryParam := func(baseURL string) (string, error) {

@@ -4,15 +4,15 @@ go 1.18
 
 require (
 	github.com/beevik/etree v1.1.0
-	github.com/cs3org/go-cs3apis v0.0.0-20220512100524-551800f020d8
-	github.com/cs3org/reva/v2 v2.4.1
+	github.com/cs3org/go-cs3apis v0.0.0-20220711084433-8f71d4e812a3
+	github.com/cs3org/reva/v2 v2.6.1
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/owncloud/ocis v1.20.0
 	github.com/pkg/errors v0.9.1
-	google.golang.org/grpc v1.46.2
+	google.golang.org/grpc v1.48.0
 )
 
 require (
