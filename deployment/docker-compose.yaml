@@ -36,10 +36,8 @@ services:
       - "certs:/certs"
     labels:
       - "traefik.enable=${TRAEFIK_DASHBOARD:-false}"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_BASIC_AUTH_USERS:-admin:$$apr1$$4vqie50r$$YQAmQdtmz5n9rEALhxJ4l.}" # defaults to admin:admin
       - "traefik.http.routers.traefik.entrypoints=https"
       - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DOMAIN:-traefik.owncloud.test}`)"
-      - "traefik.http.routers.traefik.middlewares=traefik-auth"
       - "traefik.http.routers.traefik.tls.certresolver=http"
       - "traefik.http.routers.traefik.service=api@internal"
     logging:
@@ -63,7 +61,6 @@ services:
       GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # make the REVA gateway accessible to the app drivers
       # INSECURE: needed if oCIS / Traefik is using self generated certificates
       OCIS_INSECURE: "${INSECURE:-false}"
-      GRAPH_LDAP_INSECURE: "true" # https://github.com/owncloud/ocis/issues/3812
       # basic auth (not recommended, but needed for eg. WebDav clients that do not support OpenID Connect)
       PROXY_ENABLE_BASIC_AUTH: "${PROXY_ENABLE_BASIC_AUTH:-false}"
       # admin user password
@@ -154,11 +151,11 @@ services:
 
 
   collabora:
-    image: collabora/code:6.4.11.3
+    image: collabora/code:22.05.0.1@sha256:49dd6e729c61390b0e75b9a6a77138a21fc2103a7e232bb7b3e7f5151580a9d5
     networks:
       ocis-net:
     environment:
-      domain: ${OCIS_DOMAIN:-ocis.owncloud.test}
+      aliasgroup1: https://${WOPISERVER_DOMAIN:-wopiserver.owncloud.test}:443
       DONT_GEN_SSL_CERT: "YES"
       extra_params: --o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:net.frame_ancestors=${OCIS_DOMAIN:-ocis.owncloud.test}
       username: ${COLLABORA_ADMIN_USER}
@@ -177,11 +174,12 @@ services:
     restart: always
 
   onlyoffice:
-    image: onlyoffice/documentserver:6.4.0
+    image: onlyoffice/documentserver:7.1.1
     networks:
       ocis-net:
     environment:
-      USE_UNAUTHORIZED_STORAGE: "${INSECURE:-false}" # selfsigned certificates
+      WOPI_ENABLED: "true"
+      USE_UNAUTHORIZED_STORAGE: "${INSECURE:-false}" # self signed certificates
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.onlyoffice.entrypoints=https"
