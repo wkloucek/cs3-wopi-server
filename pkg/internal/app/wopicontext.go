@@ -58,6 +58,14 @@ func WopiContextAuthMiddleware(app *demoApp, next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
+
+		wopiContextAccessToken, err := DecryptAES([]byte(app.Config.JWTSecret), claims.WopiContext.AccessToken)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
+		claims.WopiContext.AccessToken = wopiContextAccessToken
+
 		ctx = context.WithValue(ctx, wopiContextKey, claims.WopiContext)
 		// authentication for the CS3 api
 		ctx = metadata.AppendToOutgoingContext(ctx, ctxpkg.TokenHeader, claims.WopiContext.AccessToken)

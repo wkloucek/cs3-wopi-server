@@ -116,8 +116,15 @@ func (app *demoApp) OpenInApp(
 		appURL = editAppURL
 	}
 
+	cryptedReqAccessToken, err := EncryptAES([]byte(app.Config.JWTSecret), req.AccessToken)
+	if err != nil {
+		return &appproviderv1beta1.OpenInAppResponse{
+			Status: &rpcv1beta1.Status{Code: rpcv1beta1.Code_CODE_INTERNAL},
+		}, err
+	}
+
 	wopiContext := WopiContext{
-		AccessToken: req.AccessToken,
+		AccessToken: cryptedReqAccessToken,
 		FileReference: providerv1beta1.Reference{
 			ResourceId: req.GetResourceInfo().Id,
 			Path:       ".",
