@@ -28,7 +28,7 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		app.Logger.Error().Err(
 			err,
 		).Str(
-			"status code", http.StatusText(resp.StatusCode),
+			"status_code", http.StatusText(resp.StatusCode),
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("GetFile: downloading the file failed")

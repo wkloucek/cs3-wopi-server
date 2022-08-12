@@ -40,9 +40,9 @@ func GetLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
 		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
+			"status_code", resp.Status.Code.String(),
 		).Str(
-			"status msg", resp.Status.Message,
+			"status_msg", resp.Status.Message,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("GetLock failed")
@@ -85,6 +85,12 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	app.Logger.Debug().
+		Str(
+			"lock_id", lockID,
+		).Str(
+		"FileReference", wopiContext.FileReference.String(),
+	).Msg("Performing SetLock")
 	resp, err := app.gwc.SetLock(
 		ctx,
 		req,
@@ -93,7 +99,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		app.Logger.Error().Err(
 			err,
 		).Str(
-			"lock id", lockID,
+			"lock_id", lockID,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("SetLock failed")
@@ -106,7 +112,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusOK), http.StatusOK)
 		return
 
-	case rpcv1beta1.Code_CODE_FAILED_PRECONDITION:
+	case rpcv1beta1.Code_CODE_ABORTED:
 		// already locked
 		req := &providerv1beta1.GetLockRequest{
 			Ref: &wopiContext.FileReference,
@@ -119,7 +125,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 			app.Logger.Error().Err(
 				err,
 			).Str(
-				"lock id", lockID,
+				"lock_id", lockID,
 			).Str(
 				"FileReference", wopiContext.FileReference.String(),
 			).Msg("SetLock failed, fallback to GetLock failed too")
@@ -129,11 +135,11 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 		if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
 			app.Logger.Error().Str(
-				"status code", resp.Status.Code.String(),
+				"status_code", resp.Status.Code.String(),
 			).Str(
-				"status msg", resp.Status.Message,
+				"status_msg", resp.Status.Message,
 			).Str(
-				"lock id", lockID,
+				"lock_id", lockID,
 			).Str(
 				"FileReference", wopiContext.FileReference.String(),
 			).Msg("SetLock failed, fallback to GetLock failed too")
@@ -141,8 +147,13 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		}
 
 		if resp.Lock != nil {
-			w.Header().Set(HeaderWopiLock, resp.Lock.LockId)
-			http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
+			if resp.Lock.LockId != lockID {
+				w.Header().Set(HeaderWopiLock, resp.Lock.LockId)
+				http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
+				return
+			}
+
+			http.Error(w, http.StatusText(http.StatusOK), http.StatusOK)
 			return
 		}
 
@@ -151,11 +162,11 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	default:
 		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
+			"status_code", resp.Status.Code.String(),
 		).Str(
-			"status msg", resp.Status.Message,
+			"status_msg", resp.Status.Message,
 		).Str(
-			"lock id", lockID,
+			"lock_id", lockID,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("SetLock failed")
@@ -200,7 +211,7 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		app.Logger.Error().Err(
 			err,
 		).Str(
-			"lock id", lockID,
+			"lock_id", lockID,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("UnLock failed")
@@ -210,11 +221,11 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
 		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
+			"status_code", resp.Status.Code.String(),
 		).Str(
-			"status msg", resp.Status.Message,
+			"status_msg", resp.Status.Message,
 		).Str(
-			"lock id", lockID,
+			"lock_id", lockID,
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("UnLock failed")

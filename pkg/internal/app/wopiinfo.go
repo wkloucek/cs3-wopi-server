@@ -37,7 +37,7 @@ func CheckFileInfo(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	if statRes.Status.Code != rpcv1beta1.Code_CODE_OK {
 		app.Logger.Error().Str(
-			"status code", statRes.Status.Code.String(),
+			"status_code", statRes.Status.Code.String(),
 		).Str(
 			"FileReference", wopiContext.FileReference.String(),
 		).Msg("CheckFileInfo: stat failed")
