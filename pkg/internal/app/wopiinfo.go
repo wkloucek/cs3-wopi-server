@@ -26,21 +26,13 @@ func CheckFileInfo(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		Ref: &wopiContext.FileReference,
 	})
 	if err != nil {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("CheckFileInfo: stat failed")
+		app.Logger.Error().Err(err).Str("FileReference", wopiContext.FileReference.String()).Msg("CheckFileInfo: stat failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	if statRes.Status.Code != rpcv1beta1.Code_CODE_OK {
-		app.Logger.Error().Str(
-			"status_code", statRes.Status.Code.String(),
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("CheckFileInfo: stat failed")
+		app.Logger.Error().Str("status_code", statRes.Status.Code.String()).Str("FileReference", wopiContext.FileReference.String()).Msg("CheckFileInfo: stat failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
