@@ -116,8 +116,15 @@ func (app *demoApp) OpenInApp(
 		appURL = editAppURL
 	}
 
+	cryptedReqAccessToken, err := EncryptAES([]byte(app.Config.WopiSecret), req.AccessToken)
+	if err != nil {
+		return &appproviderv1beta1.OpenInAppResponse{
+			Status: &rpcv1beta1.Status{Code: rpcv1beta1.Code_CODE_INTERNAL},
+		}, err
+	}
+
 	wopiContext := WopiContext{
-		AccessToken: req.AccessToken,
+		AccessToken: cryptedReqAccessToken,
 		FileReference: providerv1beta1.Reference{
 			ResourceId: req.GetResourceInfo().Id,
 			Path:       ".",
@@ -144,7 +151,7 @@ func (app *demoApp) OpenInApp(
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessToken, err := token.SignedString([]byte(app.Config.JWTSecret))
+	accessToken, err := token.SignedString([]byte(app.Config.WopiSecret))
 
 	// TODO: use checksum!
 

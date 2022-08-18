@@ -90,7 +90,7 @@ services:
       WOPI_APP_NAME: Collabora
       WOPI_APP_DESCRIPTION: Collabora
       WOPI_APP_ICON: image-edit
-      WOPI_JWT_SECRET: ${WOPI_JWT_SECRET:-LoremIpsum567}
+      WOPI_SECRET: ${WOPI_SECRET}
 
       WOPI_GRPC_BIND_ADDR: 0.0.0.0:5678
       WOPI_GRPC_ADDR: wopiserver-collabora:5678
@@ -123,7 +123,7 @@ services:
       WOPI_APP_NAME: OnlyOffice
       WOPI_APP_DESCRIPTION: OnlyOffice
       WOPI_APP_ICON: image-edit
-      WOPI_JWT_SECRET: ${WOPI_JWT_SECRET:-LoremIpsum567}
+      WOPI_SECRET: ${WOPI_SECRET}
 
       WOPI_GRPC_BIND_ADDR: 0.0.0.0:5678
       WOPI_GRPC_ADDR: wopiserver-onlyoffice:5678

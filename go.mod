@@ -6,6 +6,7 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/cs3org/go-cs3apis v0.0.0-20220711084433-8f71d4e812a3
 	github.com/cs3org/reva/v2 v2.6.1
+	github.com/dchest/uniuri v0.0.0-20200228104902-7aecb25e1fe5
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
