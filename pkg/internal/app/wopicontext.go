@@ -44,7 +44,7 @@ func WopiContextAuthMiddleware(app *demoApp, next http.Handler) http.Handler {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 
-			return []byte(app.Config.JWTSecret), nil
+			return []byte(app.Config.WopiSecret), nil
 		})
 
 		if err != nil {
@@ -59,7 +59,7 @@ func WopiContextAuthMiddleware(app *demoApp, next http.Handler) http.Handler {
 
 		ctx := r.Context()
 
-		wopiContextAccessToken, err := DecryptAES([]byte(app.Config.JWTSecret), claims.WopiContext.AccessToken)
+		wopiContextAccessToken, err := DecryptAES([]byte(app.Config.WopiSecret), claims.WopiContext.AccessToken)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return

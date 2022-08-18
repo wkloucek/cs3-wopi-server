@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/dchest/uniuri"
 	"github.com/owncloud/ocis/ocis-pkg/log"
 	"github.com/wkloucek/cs3-wopi-server/pkg/internal/logging"
 
@@ -43,7 +44,7 @@ type Config struct {
 	WopiApp
 	CS3api
 
-	JWTSecret      string `env:"WOPI_JWT_SECRET"`
+	WopiSecret     string `env:"WOPI_SECRET"` // used as jwt secret and to encrypt access tokens
 	AppName        string `env:"WOPI_APP_NAME"`
 	AppDescription string `env:"WOPI_APP_DESCRIPTION"`
 	AppIcon        string `env:"WOPI_APP_ICON"`
@@ -68,7 +69,7 @@ func New() (*demoApp, error) {
 			AppDescription: "Open office documents with a WOPI app",
 			AppIcon:        "image-edit",
 			AppLockName:    "com.owncloud.app.wopi-server",
-			JWTSecret:      "test",
+			WopiSecret:     uniuri.NewLen(32),
 			CS3api: CS3api{
 				Addr:                   "127.0.0.1:9142",
 				CS3DataGatewayInsecure: true,
