@@ -29,23 +29,13 @@ func GetLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		req,
 	)
 	if err != nil {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("GetLock failed")
+		app.Logger.Error().Err(err).Str("FileReference", wopiContext.FileReference.String()).Msg("GetLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
-		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
-		).Str(
-			"status msg", resp.Status.Message,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("GetLock failed")
+		app.Logger.Error().Str("status_code", resp.Status.Code.String()).Str("status_msg", resp.Status.Message).Str("FileReference", wopiContext.FileReference.String()).Msg("GetLock failed")
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
@@ -85,18 +75,13 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	app.Logger.Debug().Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("Performing SetLock")
 	resp, err := app.gwc.SetLock(
 		ctx,
 		req,
 	)
 	if err != nil {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"lock id", lockID,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("SetLock failed")
+		app.Logger.Error().Err(err).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("SetLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -116,33 +101,26 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 			req,
 		)
 		if err != nil {
-			app.Logger.Error().Err(
-				err,
-			).Str(
-				"lock id", lockID,
-			).Str(
-				"FileReference", wopiContext.FileReference.String(),
-			).Msg("SetLock failed, fallback to GetLock failed too")
+			app.Logger.Error().Err(err).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("SetLock failed, fallback to GetLock failed too")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
 		if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
-			app.Logger.Error().Str(
-				"status code", resp.Status.Code.String(),
-			).Str(
-				"status msg", resp.Status.Message,
-			).Str(
-				"lock id", lockID,
-			).Str(
-				"FileReference", wopiContext.FileReference.String(),
-			).Msg("SetLock failed, fallback to GetLock failed too")
+			app.Logger.Error().Str("status_code", resp.Status.Code.String()).Str("status_msg", resp.Status.Message).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("SetLock failed, fallback to GetLock failed too")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
 
 		if resp.Lock != nil {
-			w.Header().Set(HeaderWopiLock, resp.Lock.LockId)
-			http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
+			if resp.Lock.LockId != lockID {
+				w.Header().Set(HeaderWopiLock, resp.Lock.LockId)
+				http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
+				return
+			}
+
+			// TODO: according to the spec we need to treat this as a RefreshLock
+
+			http.Error(w, http.StatusText(http.StatusOK), http.StatusOK)
 			return
 		}
 
@@ -150,15 +128,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		return
 
 	default:
-		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
-		).Str(
-			"status msg", resp.Status.Message,
-		).Str(
-			"lock id", lockID,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("SetLock failed")
+		app.Logger.Error().Str("status_code", resp.Status.Code.String()).Str("status_msg", resp.Status.Message).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("SetLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -197,27 +167,13 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		req,
 	)
 	if err != nil {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"lock id", lockID,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("UnLock failed")
+		app.Logger.Error().Err(err).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("UnLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
-		app.Logger.Error().Str(
-			"status code", resp.Status.Code.String(),
-		).Str(
-			"status msg", resp.Status.Message,
-		).Str(
-			"lock id", lockID,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("UnLock failed")
+		app.Logger.Error().Str("status_code", resp.Status.Code.String()).Str("status_msg", resp.Status.Message).Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("UnLock failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

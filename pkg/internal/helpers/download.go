@@ -39,9 +39,9 @@ func DownloadFile(
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
 		logger.Error().Str(
-			"status code", resp.Status.Code.String(),
+			"status_code", resp.Status.Code.String(),
 		).Str(
-			"status msg", resp.Status.Message,
+			"status_msg", resp.Status.Message,
 		).Str(
 			"FileReference", ref.String(),
 		).Msg("DownloadHelper: InitiateFileDownload failed")

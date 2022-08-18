@@ -10,8 +10,9 @@
             //"args": [
             //    "server"
             //],
-            //"env": {
-            //}
+            "env": {
+                "WOPI_APP_ADDR": "http://localhost:8080"
+            }
         }
     ]
 }

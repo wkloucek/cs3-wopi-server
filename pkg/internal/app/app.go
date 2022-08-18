@@ -149,7 +149,7 @@ func (app *demoApp) RegisterDemoApp(ctx context.Context) error {
 	}
 
 	if resp.Status.Code != rpcv1beta1.Code_CODE_OK {
-		app.Logger.Error().Str("status code", resp.Status.Code.String()).Msg("AddAppProvider failed")
+		app.Logger.Error().Str("status_code", resp.Status.Code.String()).Msg("AddAppProvider failed")
 		return errors.New("status code != CODE_OK")
 	}
 

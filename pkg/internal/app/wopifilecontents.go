@@ -25,13 +25,7 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil || resp.StatusCode != http.StatusOK {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"status code", http.StatusText(resp.StatusCode),
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("GetFile: downloading the file failed")
+		app.Logger.Error().Err(err).Str("status_code", http.StatusText(resp.StatusCode)).Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: downloading the file failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -40,9 +34,7 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 	file, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		app.Logger.Error().Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("GetFile: reading from the download body failed")
+		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: reading from the download body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -50,9 +42,7 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	// but just return the file here
 	_, err = w.Write(file)
 	if err != nil {
-		app.Logger.Error().Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("GetFile: writing to the response body failed")
+		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: writing to the response body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -70,9 +60,7 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	file, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		app.Logger.Error().Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("PutFile: reading from the body failed")
+		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("PutFile: reading from the body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -90,11 +78,7 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		app.Logger.Error().Err(
-			err,
-		).Str(
-			"FileReference", wopiContext.FileReference.String(),
-		).Msg("PutFile: uploading the file failed")
+		app.Logger.Error().Err(err).Str("FileReference", wopiContext.FileReference.String()).Msg("PutFile: uploading the file failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
