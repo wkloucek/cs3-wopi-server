@@ -83,7 +83,7 @@ func New() (*demoApp, error) {
 				Scheme:   "http",
 			},
 			WopiApp: WopiApp{
-				Addr:     "http://localhost:8080",
+				Addr:     "https://localhost:8080",
 				Insecure: true,
 			},
 		},
