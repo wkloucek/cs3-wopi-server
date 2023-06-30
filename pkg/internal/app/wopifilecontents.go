@@ -2,7 +2,7 @@ package app
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/wkloucek/cs3-wopi-server/pkg/internal/helpers"
@@ -32,7 +32,7 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	// read the file from the body
 	defer resp.Body.Close()
-	file, err := ioutil.ReadAll(resp.Body)
+	file, err := io.ReadAll(resp.Body)
 	if err != nil {
 		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: reading from the download body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -58,7 +58,7 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	// read the file from the body
 	defer r.Body.Close()
-	file, err := ioutil.ReadAll(r.Body)
+	file, err := io.ReadAll(r.Body)
 	if err != nil {
 		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("PutFile: reading from the body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

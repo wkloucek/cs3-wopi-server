@@ -112,7 +112,7 @@ func (app *demoApp) OpenInApp(
 	}
 
 	appURL := viewAppURL
-	if req.ViewMode == appproviderv1beta1.OpenInAppRequest_VIEW_MODE_READ_WRITE {
+	if req.ViewMode == appproviderv1beta1.ViewMode_VIEW_MODE_READ_WRITE {
 		appURL = editAppURL
 	}
 

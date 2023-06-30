@@ -3,10 +3,9 @@ version: "3.7"
 
 services:
   onlyoffice:
-    image: onlyoffice/documentserver:7.1.1
+    image: onlyoffice/documentserver:7.3.3
     environment:
       WOPI_ENABLED: "true"
       USE_UNAUTHORIZED_STORAGE: "true" # self signed certificates
-
     ports:
       - 8080:80

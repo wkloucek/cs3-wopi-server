@@ -34,12 +34,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "certs:/certs"
-    labels:
-      - "traefik.enable=${TRAEFIK_DASHBOARD:-false}"
-      - "traefik.http.routers.traefik.entrypoints=https"
-      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DOMAIN:-traefik.owncloud.test}`)"
-      - "traefik.http.routers.traefik.tls.certresolver=http"
-      - "traefik.http.routers.traefik.service=api@internal"
     logging:
       driver: "local"
     restart: always
@@ -55,14 +49,14 @@ services:
     # therefore we ignore the error and then start the ocis server
     command: ["-c", "ocis init || true; ocis server"]
     environment:
+      MICRO_REGISTRY: "mdns"
+
       OCIS_URL: https://${OCIS_DOMAIN:-ocis.owncloud.test}
       OCIS_LOG_LEVEL: ${OCIS_LOG_LEVEL:-error} # make oCIS less verbose
       PROXY_TLS: "false" # do not use SSL between Traefik and oCIS
       GATEWAY_GRPC_ADDR: 0.0.0.0:9142 # make the REVA gateway accessible to the app drivers
       # INSECURE: needed if oCIS / Traefik is using self generated certificates
       OCIS_INSECURE: "${INSECURE:-false}"
-      # basic auth (not recommended, but needed for eg. WebDav clients that do not support OpenID Connect)
-      PROXY_ENABLE_BASIC_AUTH: "${PROXY_ENABLE_BASIC_AUTH:-false}"
       # admin user password
       IDM_ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin}" # this overrides the admin password from the configuration file
       # demo users
@@ -87,14 +81,15 @@ services:
     networks:
       ocis-net:
     environment:
+      MICRO_REGISTRY: "mdns"
+
+      WOPI_SERVICE_NAME: collabora
       WOPI_APP_NAME: Collabora
       WOPI_APP_DESCRIPTION: Collabora
       WOPI_APP_ICON: image-edit
       WOPI_SECRET: ${WOPI_SECRET}
 
       WOPI_GRPC_BIND_ADDR: 0.0.0.0:5678
-      WOPI_GRPC_ADDR: wopiserver-collabora:5678
-
       WOPI_HTTP_BIND_ADDR: 0.0.0.0:6789
       WOPI_HTTP_ADDR: ${WOPISERVER_COLLABORA_DOMAIN:-wopiserver-collabora.owncloud.test}
       WOPI_HTTP_SCHEME: https
@@ -102,7 +97,6 @@ services:
       WOPI_APP_ADDR: https://${COLLABORA_DOMAIN:-collabora.owncloud.test}
       WOPI_APP_INSECURE: "${INSECURE:-false}"
 
-      WOPI_CS3API_ADDR: ocis:9142
       WOPI_CS3API_DATA_GATEWAY_INSECURE: "${INSECURE:-false}"
     labels:
       - "traefik.enable=true"
@@ -120,14 +114,15 @@ services:
     networks:
       ocis-net:
     environment:
+      MICRO_REGISTRY: "mdns"
+
+      WOPI_SERVICE_NAME: onlyoffice
       WOPI_APP_NAME: OnlyOffice
       WOPI_APP_DESCRIPTION: OnlyOffice
       WOPI_APP_ICON: image-edit
       WOPI_SECRET: ${WOPI_SECRET}
 
       WOPI_GRPC_BIND_ADDR: 0.0.0.0:5678
-      WOPI_GRPC_ADDR: wopiserver-onlyoffice:5678
-
       WOPI_HTTP_BIND_ADDR: 0.0.0.0:6789
       WOPI_HTTP_ADDR: ${WOPISERVER_ONLYOFFICE_DOMAIN:-wopiserver-onlyoffice.owncloud.test}
       WOPI_HTTP_SCHEME: https
@@ -135,7 +130,6 @@ services:
       WOPI_APP_ADDR: https://${ONLYOFFICE_DOMAIN:-onlyoffice.owncloud.test}
       WOPI_APP_INSECURE: "${INSECURE:-false}"
 
-      WOPI_CS3API_ADDR: ocis:9142
       WOPI_CS3API_DATA_GATEWAY_INSECURE: "${INSECURE:-false}"
     labels:
       - "traefik.enable=true"
@@ -148,18 +142,14 @@ services:
       driver: "local"
     restart: always
 
-
-
   collabora:
-    image: collabora/code:22.05.0.1@sha256:49dd6e729c61390b0e75b9a6a77138a21fc2103a7e232bb7b3e7f5151580a9d5
+    image: collabora/code:23.05.1.2.1
     networks:
       ocis-net:
     environment:
-      aliasgroup1: https://${WOPISERVER_DOMAIN:-wopiserver.owncloud.test}:443
+      aliasgroup1: https://${WOPISERVER_COLLABORA_DOMAIN:-wopiserver-collabora.owncloud.test}:443
       DONT_GEN_SSL_CERT: "YES"
       extra_params: --o:ssl.enable=false --o:ssl.termination=true --o:welcome.enable=false --o:net.frame_ancestors=${OCIS_DOMAIN:-ocis.owncloud.test}
-      username: ${COLLABORA_ADMIN_USER}
-      password: ${COLLABORA_ADMIN_PASSWORD}
     cap_add:
       - MKNOD
     labels:
@@ -174,7 +164,7 @@ services:
     restart: always
 
   onlyoffice:
-    image: onlyoffice/documentserver:7.1.1
+    image: onlyoffice/documentserver:7.3.3
     networks:
       ocis-net:
     environment:

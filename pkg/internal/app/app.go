@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/dchest/uniuri"
-	"github.com/owncloud/ocis/ocis-pkg/log"
+	"github.com/owncloud/ocis/v2/ocis-pkg/log"
 	"github.com/wkloucek/cs3-wopi-server/pkg/internal/logging"
 
 	registryv1beta1 "github.com/cs3org/go-cs3apis/cs3/app/registry/v1beta1"
@@ -13,12 +13,22 @@ import (
 	rpcv1beta1 "github.com/cs3org/go-cs3apis/cs3/rpc/v1beta1"
 	"github.com/cs3org/reva/v2/pkg/mime"
 	"github.com/cs3org/reva/v2/pkg/rgrpc/todo/pool"
-	"github.com/owncloud/ocis/ocis-pkg/config/envdecode"
+	"github.com/gofrs/uuid"
+	"github.com/owncloud/ocis/v2/ocis-pkg/config/envdecode"
+	"github.com/owncloud/ocis/v2/ocis-pkg/registry"
 	"google.golang.org/grpc"
 )
 
+type Service struct {
+	Namespace string
+	Name      string `env:"WOPI_SERVICE_NAME"`
+}
+
+func (s Service) GetServiceFQDN() string {
+	return s.Namespace + "." + s.Name
+}
+
 type GRPC struct {
-	Addr     string `env:"WOPI_GRPC_ADDR"`
 	BindAddr string `env:"WOPI_GRPC_BIND_ADDR"`
 }
 
@@ -34,11 +44,12 @@ type WopiApp struct {
 }
 
 type CS3api struct {
-	Addr                   string `env:"WOPI_CS3API_ADDR"`
+	GatewayServiceName     string `env:"WOPI_CS3API_GATEWAY_SERVICENAME"`
 	CS3DataGatewayInsecure bool   `env:"WOPI_CS3API_DATA_GATEWAY_INSECURE"`
 }
 
 type Config struct {
+	Service
 	GRPC
 	HTTP
 	WopiApp
@@ -68,23 +79,25 @@ func New() (*demoApp, error) {
 			AppName:        "WOPI app",
 			AppDescription: "Open office documents with a WOPI app",
 			AppIcon:        "image-edit",
-			AppLockName:    "com.owncloud.app.wopi-server",
+			AppLockName:    "com.github.wkloucek.cs3-wopi-server",
 			WopiSecret:     uniuri.NewLen(32),
 			CS3api: CS3api{
-				Addr:                   "127.0.0.1:9142",
+				GatewayServiceName:     "com.owncloud.api.gateway",
 				CS3DataGatewayInsecure: true,
 			},
+			Service: Service{
+				Namespace: "com.github.wkloucek.cs3-wopi-server",
+			},
 			GRPC: GRPC{
-				Addr:     "127.0.0.1:5678",
 				BindAddr: "127.0.0.1:5678",
 			},
 			HTTP: HTTP{
-				Addr:     "172.17.0.1:6789",
-				BindAddr: "0.0.0.0:6789",
+				Addr:     "127.0.0.1:6789",
+				BindAddr: "127.0.0.1:6789",
 				Scheme:   "http",
 			},
 			WopiApp: WopiApp{
-				Addr:     "https://localhost:8080",
+				Addr:     "https://127.0.0.1:8080",
 				Insecure: true,
 			},
 		},
@@ -105,13 +118,18 @@ func New() (*demoApp, error) {
 func (app *demoApp) GetCS3apiClient() error {
 	// establish a connection to the cs3 api endpoint
 	// in this case a REVA gateway, started by oCIS
-	gwc, err := pool.GetGatewayServiceClient(app.Config.CS3api.Addr)
+	gwc, err := pool.GetGatewayServiceClient(app.Config.CS3api.GatewayServiceName)
 	if err != nil {
 		return err
 	}
 	app.gwc = gwc
 
 	return nil
+}
+
+func (app *demoApp) RegisterOcisService(ctx context.Context) error {
+	svc := registry.BuildGRPCService(app.Config.Service.GetServiceFQDN(), uuid.Must(uuid.NewV4()).String(), app.Config.GRPC.BindAddr, "0.0.0")
+	return registry.RegisterService(ctx, svc, app.Logger)
 }
 
 func (app *demoApp) RegisterDemoApp(ctx context.Context) error {
@@ -138,7 +156,7 @@ func (app *demoApp) RegisterDemoApp(ctx context.Context) error {
 			Name:        app.Config.AppName,
 			Description: app.Config.AppDescription,
 			Icon:        app.Config.AppIcon,
-			Address:     app.Config.GRPC.Addr, // address of the grpc server we start in this demo app
+			Address:     app.Config.Service.GetServiceFQDN(),
 			MimeTypes:   mimeTypes,
 		},
 	}

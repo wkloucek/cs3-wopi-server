@@ -15,6 +15,10 @@ func Start() error {
 		return err
 	}
 
+	if err := app.RegisterOcisService(ctx); err != nil {
+		return err
+	}
+
 	if err := app.WopiDiscovery(ctx); err != nil {
 		return err
 	}
