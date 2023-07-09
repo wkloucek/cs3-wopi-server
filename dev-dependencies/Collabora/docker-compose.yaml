@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   collabora:
-    image: collabora/code:latest
+    image: collabora/code:23.05.1.2.1
     environment:
       domain: localhost
       extra_params: --o:ssl.enable=true --o:ssl.termination=true --o:welcome.enable=false --o:net.frame_ancestors=localhost:*

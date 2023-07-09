@@ -10,7 +10,7 @@ import (
 	gatewayv1beta1 "github.com/cs3org/go-cs3apis/cs3/gateway/v1beta1"
 	rpcv1beta1 "github.com/cs3org/go-cs3apis/cs3/rpc/v1beta1"
 	providerv1beta1 "github.com/cs3org/go-cs3apis/cs3/storage/provider/v1beta1"
-	"github.com/owncloud/ocis/ocis-pkg/log"
+	"github.com/owncloud/ocis/v2/ocis-pkg/log"
 )
 
 func UploadFile(

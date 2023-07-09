@@ -24,7 +24,7 @@ type WopiContext struct {
 	AccessToken   string
 	FileReference providerv1beta1.Reference
 	User          *userv1beta1.User
-	ViewMode      appproviderv1beta1.OpenInAppRequest_ViewMode
+	ViewMode      appproviderv1beta1.ViewMode
 	EditAppUrl    string
 	ViewAppUrl    string
 }

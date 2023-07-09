@@ -1,7 +1,7 @@
 package logging
 
 import (
-	"github.com/owncloud/ocis/ocis-pkg/log"
+	"github.com/owncloud/ocis/v2/ocis-pkg/log"
 )
 
 // LoggerFromConfig initializes a service-specific logger instance.
