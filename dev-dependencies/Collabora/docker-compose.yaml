@@ -5,6 +5,7 @@ services:
   collabora:
     image: collabora/code:23.05.1.2.1
     environment:
+      aliasgroup1: https://172.26.0.1:6789
       domain: localhost
       extra_params: --o:ssl.enable=true --o:ssl.termination=true --o:welcome.enable=false --o:net.frame_ancestors=localhost:*
     cap_add:

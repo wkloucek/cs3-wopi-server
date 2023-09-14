@@ -11,7 +11,9 @@
             //    "server"
             //],
             "env": {
-                "WOPI_APP_ADDR": "http://localhost:8080",
+                "WOPI_APP_ADDR": "https://localhost:8080",
+                "WOPI_HTTP_ADDR": "172.26.0.1:6789",
+                "WOPI_HTTP_BIND_ADDR": "0.0.0.0:6789",
                 "MICRO_REGISTRY": "mdns",
                 "WOPI_SERVICE_NAME": "office",
             }
