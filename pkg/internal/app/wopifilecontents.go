@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"io"
 	"net/http"
 
@@ -32,17 +31,9 @@ func GetFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	// read the file from the body
 	defer resp.Body.Close()
-	file, err := io.ReadAll(resp.Body)
+	_, err = io.Copy(w, resp.Body)
 	if err != nil {
-		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: reading from the download body failed")
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	// but just return the file here
-	_, err = w.Write(file)
-	if err != nil {
-		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: writing to the response body failed")
+		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("GetFile: copying the file content to the response body failed")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -58,17 +49,11 @@ func PutFile(app *demoApp, w http.ResponseWriter, r *http.Request) {
 
 	// read the file from the body
 	defer r.Body.Close()
-	file, err := io.ReadAll(r.Body)
-	if err != nil {
-		app.Logger.Error().Str("FileReference", wopiContext.FileReference.String()).Msg("PutFile: reading from the body failed")
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
 
 	// upload the file
-	err = helpers.UploadFile(
+	err := helpers.UploadFile(
 		ctx,
-		bytes.NewReader(file),
+		r.Body,
 		&wopiContext.FileReference,
 		app.gwc,
 		wopiContext.AccessToken,
