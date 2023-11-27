@@ -60,14 +60,14 @@ func CheckFileInfo(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch wopiContext.ViewMode {
-	case appproviderv1beta1.ViewMode_VIEW_MODE_READ_WRITE:
+	case appproviderv1beta1.OpenInAppRequest_VIEW_MODE_READ_WRITE:
 		fileInfo.SupportsUpdate = true
 		fileInfo.UserCanWrite = true
 
-	case appproviderv1beta1.ViewMode_VIEW_MODE_READ_ONLY:
+	case appproviderv1beta1.OpenInAppRequest_VIEW_MODE_READ_ONLY:
 		// nothing special to do here for now
 
-	case appproviderv1beta1.ViewMode_VIEW_MODE_VIEW_ONLY:
+	case appproviderv1beta1.OpenInAppRequest_VIEW_MODE_VIEW_ONLY:
 		fileInfo.DisableExport = true
 		fileInfo.DisableCopy = true
 		fileInfo.DisablePrint = true

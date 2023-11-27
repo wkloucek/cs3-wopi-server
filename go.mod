@@ -6,7 +6,7 @@ toolchain go1.21.2
 
 require (
 	github.com/beevik/etree v1.2.0
-	github.com/cs3org/go-cs3apis v0.0.0-20231117080649-97e6f4efd09f
+	github.com/cs3org/go-cs3apis v0.0.0-20230516150832-730ac860c71d
 	github.com/cs3org/reva/v2 v2.16.2
 	github.com/dchest/uniuri v1.2.0
 	github.com/go-chi/chi v4.1.2+incompatible
@@ -14,7 +14,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.4.0
-	github.com/owncloud/ocis/v2 v2.0.1-0.20231124123240-d6f4b24ffaaa
+	github.com/owncloud/ocis/v2 v2.0.1-0.20231124123240-d6f4b24ffaaa // oCIS 4.0.3
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.59.0
 )
@@ -120,3 +120,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
+
+replace github.com/cs3org/go-cs3apis => github.com/2403905/go-cs3apis v0.0.0-20230517122726-727045414fd1 // same replace as oCIS 4.0.3 https://github.com/owncloud/ocis/blob/d6f4b24ffaaaa9a6a6370fe621b4f06e80b5a638/go.mod
