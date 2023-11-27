@@ -12,7 +12,9 @@
             //],
             "env": {
                 "WOPI_APP_ADDR": "http://localhost:8080",
-                "MICRO_REGISTRY": "mdns",
+                "WOPI_HTTP_ADDR": "172.17.0.1:6789", // IP of docker0 interface, the office will contact make WOPI calls here
+                "WOPI_HTTP_BIND_ADDR": "172.17.0.1:6789", // bind to IP of docker0 interface
+                "MICRO_REGISTRY": "mdns", // we need to use the same service registry as oCIS
                 "WOPI_SERVICE_NAME": "office",
             }
         }
