@@ -1,10 +1,10 @@
 package helpers
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
 	"errors"
+	"io"
 	"net/http"
 
 	gatewayv1beta1 "github.com/cs3org/go-cs3apis/cs3/gateway/v1beta1"
@@ -13,16 +13,7 @@ import (
 	"github.com/owncloud/ocis/v2/ocis-pkg/log"
 )
 
-func UploadFile(
-	ctx context.Context,
-	content *bytes.Reader,
-	ref *providerv1beta1.Reference,
-	gwc gatewayv1beta1.GatewayAPIClient,
-	token string,
-	lockID string,
-	insecure bool,
-	logger log.Logger,
-) error {
+func UploadFile(ctx context.Context, content io.ReadCloser, ref *providerv1beta1.Reference, gwc gatewayv1beta1.GatewayAPIClient, token string, lockID string, insecure bool, logger log.Logger) error {
 
 	req := &providerv1beta1.InitiateFileUploadRequest{
 		Ref:    ref,
