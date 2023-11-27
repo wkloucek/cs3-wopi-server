@@ -8,9 +8,9 @@ import (
 func Configure(name string) log.Logger {
 	return log.NewLogger(
 		log.Name(name),
-		log.Level("debug"),
-		log.Pretty(true),
-		log.Color(true),
-		log.File(""),
+		log.Level("debug"), // TODO: this should be configurable
+		log.Pretty(true),   // TODO: this should be configurable
+		log.Color(true),    // TODO: this should be configurable
+		log.File(""),       // TODO: this should be configurable
 	)
 }

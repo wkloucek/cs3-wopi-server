@@ -83,7 +83,7 @@ func New() (*demoApp, error) {
 			WopiSecret:     uniuri.NewLen(32),
 			CS3api: CS3api{
 				GatewayServiceName:     "com.owncloud.api.gateway",
-				CS3DataGatewayInsecure: true,
+				CS3DataGatewayInsecure: true, // TODO: this should have a secure default
 			},
 			Service: Service{
 				Namespace: "com.github.wkloucek.cs3-wopi-server",
@@ -98,7 +98,7 @@ func New() (*demoApp, error) {
 			},
 			WopiApp: WopiApp{
 				Addr:     "https://127.0.0.1:8080",
-				Insecure: true,
+				Insecure: true, // TODO: this should have a secure default
 			},
 		},
 	}

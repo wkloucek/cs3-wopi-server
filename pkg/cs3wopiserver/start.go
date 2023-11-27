@@ -39,6 +39,7 @@ func Start() error {
 		return err
 	}
 
+	// TODO: wait for OS signals instead of sleeping
 	for {
 		time.Sleep(1 * time.Second)
 	}
