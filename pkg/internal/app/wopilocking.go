@@ -24,7 +24,7 @@ func GetLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	req := &providerv1beta1.GetLockRequest{
 		Ref: &wopiContext.FileReference,
 	}
-	resp, err := app.gwc.GetLock(
+	resp, err := app.GatewayAPIClient.GetLock(
 		ctx,
 		req,
 	)
@@ -76,7 +76,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.Logger.Debug().Str("lock_id", lockID).Str("FileReference", wopiContext.FileReference.String()).Msg("Performing SetLock")
-	resp, err := app.gwc.SetLock(
+	resp, err := app.GatewayAPIClient.SetLock(
 		ctx,
 		req,
 	)
@@ -96,7 +96,7 @@ func Lock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		req := &providerv1beta1.GetLockRequest{
 			Ref: &wopiContext.FileReference,
 		}
-		resp, err := app.gwc.GetLock(
+		resp, err := app.GatewayAPIClient.GetLock(
 			ctx,
 			req,
 		)
@@ -162,7 +162,7 @@ func UnLock(app *demoApp, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	resp, err := app.gwc.Unlock(
+	resp, err := app.GatewayAPIClient.Unlock(
 		ctx,
 		req,
 	)
