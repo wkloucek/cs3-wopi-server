@@ -2,9 +2,10 @@ package cs3wopiserver
 
 import (
 	"context"
-	"time"
-
 	"github.com/wkloucek/cs3-wopi-server/pkg/internal/app"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func Start() error {
@@ -39,8 +40,11 @@ func Start() error {
 		return err
 	}
 
-	// TODO: wait for OS signals instead of sleeping
-	for {
-		time.Sleep(1 * time.Second)
-	}
+	// Wait here until CTRL-C or other term signal is received.
+	app.Logger.Info().Msg("WOPI is now running.  Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-sc
+
+	return nil
 }

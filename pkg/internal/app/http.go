@@ -84,8 +84,11 @@ func (app *demoApp) HTTPServer(ctx context.Context) error {
 		})
 	})
 
-	if err := http.ListenAndServe(app.Config.HTTP.BindAddr, r); err != nil {
-		return err
-	}
+	go func() {
+		if err := http.ListenAndServe(app.Config.HTTP.BindAddr, r); err != nil {
+			app.Logger.Error().Err(err).Msg("HTTP server error")
+		}
+	}()
+
 	return nil
 }
