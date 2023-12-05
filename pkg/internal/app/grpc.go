@@ -153,8 +153,6 @@ func (app *demoApp) OpenInApp(
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	accessToken, err := token.SignedString([]byte(app.Config.WopiSecret))
 
-	// TODO: use checksum!
-
 	if err != nil {
 		return &appproviderv1beta1.OpenInAppResponse{
 			Status: &rpcv1beta1.Status{Code: rpcv1beta1.Code_CODE_INTERNAL},
