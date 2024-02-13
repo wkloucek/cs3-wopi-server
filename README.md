@@ -1,5 +1,7 @@
 # CS3api WOPI server
 
+This project has been moved to https://github.com/owncloud/cs3-wopi-server
+
 ## development
 
 1. start one office from `./dev-dependencies/Collabora` or `./dev-dependencies/OnlyOffice` by running `docker compose up -d` in that directory
